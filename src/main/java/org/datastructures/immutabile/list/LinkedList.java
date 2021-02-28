@@ -45,7 +45,7 @@ public class LinkedList<T> {
     }
 
     public int size() {
-        return foldLeft(0, (len, e) -> len + 1);
+        return reduceLeft(0, (len, e) -> len + 1);
     }
 
     public LinkedList<T> prepend(T data) {
@@ -55,19 +55,19 @@ public class LinkedList<T> {
     }
 
     public LinkedList<T> prependList(LinkedList<T> list) {
-        return list.foldRight(this, LinkedList::prepend);
+        return list.reduceRight(this, LinkedList::prepend);
     }
 
     public LinkedList<T> append(T data) {
-        return foldRight(LinkedList.of(data), LinkedList::prepend);
+        return reduceRight(LinkedList.of(data), LinkedList::prepend);
     }
 
     public LinkedList<T> appendList(LinkedList<T> list) {
-        return foldRight(list, LinkedList::prepend);
+        return reduceRight(list, LinkedList::prepend);
     }
 
     public LinkedList<T> reverse() {
-        return foldLeft(LinkedList.empty(), LinkedList::prepend);
+        return reduceLeft(LinkedList.empty(), LinkedList::prepend);
     }
 
     public Optional<T> getAt(int index) {
@@ -116,45 +116,45 @@ public class LinkedList<T> {
     }
 
 
-    public <R> R foldLeft(R initial, BiFunction<R, T, R> function) {
-        return foldLeft(head, initial, function);
+    public <R> R reduceLeft(R initial, BiFunction<R, T, R> function) {
+        return reduceLeft(head, initial, function);
     }
 
-    private <R> R foldLeft(Optional<Node<T>> maybeNode, R initial, BiFunction<R, T, R> function) {
+    private <R> R reduceLeft(Optional<Node<T>> maybeNode, R initial, BiFunction<R, T, R> function) {
         return maybeNode.map(node -> {
             R partial = function.apply(initial, node.data);
-            return foldLeft(node.next, partial, function);
+            return reduceLeft(node.next, partial, function);
         }).orElse(initial);
     }
 
 
-    public <R> R foldRight(R initial, BiFunction<R, T, R> function) {
-        return foldRight(head, initial, function);
+    public <R> R reduceRight(R initial, BiFunction<R, T, R> function) {
+        return reduceRight(head, initial, function);
     }
 
-    private <R> R foldRight(Optional<Node<T>> maybeNode, R initial, BiFunction<R, T, R> function) {
+    private <R> R reduceRight(Optional<Node<T>> maybeNode, R initial, BiFunction<R, T, R> function) {
         return maybeNode.map(node -> {
-            R partial = foldRight(node.next, initial, function);
+            R partial = reduceRight(node.next, initial, function);
             return function.apply(partial, node.data);
         }).orElse(initial);
     }
 
     public LinkedList<T> filter(Predicate<T> predicate) {
-        return foldRight(LinkedList.empty(), (list, data) -> predicate.test(data) ? list.prepend(data) : list);
+        return reduceRight(LinkedList.empty(), (list, data) -> predicate.test(data) ? list.prepend(data) : list);
     }
 
     public <R> LinkedList<R> map(Function<T, R> function) {
-        return foldRight(LinkedList.empty(), (list, data) -> list.prepend(function.apply(data)));
+        return reduceRight(LinkedList.empty(), (list, data) -> list.prepend(function.apply(data)));
     }
 
     public <R> LinkedList<R> flatMap(Function<T, LinkedList<R>> function) {
-        return foldRight(LinkedList.empty(), (list, data) -> list.prependList(function.apply(data)));
+        return reduceRight(LinkedList.empty(), (list, data) -> list.prependList(function.apply(data)));
     }
 
 
     @Override
     public String toString() {
-        String string = "[" + foldRight("", (partial, data) -> data + ", " + partial);
+        String string = "[" + reduceRight("", (partial, data) -> data + ", " + partial);
         if (string.length() > 2) {
             return string.substring(0, string.length() - 2) + "]";
         } else {
@@ -181,7 +181,7 @@ public class LinkedList<T> {
 
     @Override
     public int hashCode() {
-        return foldLeft(13, (acc, i) -> acc + i.hashCode());
+        return reduceLeft(13, (acc, i) -> acc + i.hashCode());
     }
 }
 
@@ -208,7 +208,7 @@ class Node<T> {
     }
 
     public static <T> Node<T> forData(T data) {
-        return new Node<T>(Optional.empty(), data);
+        return new Node<>(Optional.empty(), data);
     }
 
     @Override

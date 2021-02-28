@@ -66,20 +66,20 @@ public class LinkedListTest {
     @Test
     public void testFoldLeft() {
         var list = LinkedList.of(1, 2, 3);
-        int sum = list.foldLeft(0, Integer::sum);
+        int sum = list.reduceLeft(0, Integer::sum);
         assertEquals(6, sum);
 
-        var foldedLeft = list.foldLeft(LinkedList.empty(), LinkedList::prepend);
+        var foldedLeft = list.reduceLeft(LinkedList.empty(), LinkedList::prepend);
         assertEquals(LinkedList.of(3, 2, 1), foldedLeft);
     }
 
     @Test
     public void testFoldRight() {
         var list = LinkedList.of(1, 2, 3);
-        int sum = list.foldRight(0, Integer::sum);
+        int sum = list.reduceRight(0, Integer::sum);
         assertEquals(6, sum);
 
-        var foldedRight = list.foldRight(LinkedList.empty(), LinkedList::prepend);
+        var foldedRight = list.reduceRight(LinkedList.empty(), LinkedList::prepend);
         assertEquals(LinkedList.of(1, 2, 3), foldedRight);
     }
 
